@@ -22,6 +22,9 @@ exports.createCategory = (req, res) => {
 };
 
 exports.getCategory = (req, res) => {
+  if (!req.category) {
+    return res.status(404).json({ error: "category not found" });
+  }
   return res.json(req.category);
 };
 
@@ -36,9 +39,14 @@ exports.getAllCategory = (req, res) => {
 
 exports.updateCategory = (req, res) => {
   const category = req.category;
+  if (!category) {
+    return res.status(404).json({ error: "No category found" });
+  }
   category.name = req.body.name;
   category.save((err, updatedCategory) => {
     if (err) {
+      console.log(err);
+      
       return res.status(400).json({ error: "cannot update category" });
     }
     res.json(updatedCategory);
@@ -52,6 +60,7 @@ exports.removeCategory = (req, res) => {
   }
   category.remove((err, category) => {
     if (err) {
+      console.log(err);
       return res.status(400).json({ error: "failed to delete category" });
     }
     res.json({
