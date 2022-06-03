@@ -17,6 +17,9 @@ exports.signup = (req, res) => {
   const user = new User(req.body);
   user.save((err, user) => {
     if (err) {
+      if (err.code === 11000) {
+        return res.status(400).json({ err: "User already exists" });
+      }
       return res.status(400).json({ err: "Not able to save User" });
     }
     res.json(user);
@@ -62,7 +65,7 @@ exports.signout = (req, res) => {
 exports.isSignedIn = expressJwt({
   secret: process.env.SECRET,
   userProperty: "auth",
-  algorithms: ["HS256"] 
+  algorithms: ["HS256"],
 });
 
 //custom middlewares
