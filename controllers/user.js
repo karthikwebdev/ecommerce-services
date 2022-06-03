@@ -53,13 +53,13 @@ exports.userPurchaseList = (req, res) => {
 
 exports.pushOrderInPurchaseList = async (req, res, next) => {
   let purchases = [];
-  let productIds = req.body.products.map((product) => product.productId);
+  let productIds = req.body.products.map((product) => product.product);
 
   const products = await Product.find({ _id: { $in: productIds } }).lean();
   req.products = products;
 
   for (let i = 0; i < req.body.products.length; i++) {
-    const productId = req.body.products[i].productId;
+    const productId = req.body.products[i].product;
     const quantity = req.body.products[i].quantity;
     let product = products.find((product) => product._id.equals(productId));
     if (product) {
