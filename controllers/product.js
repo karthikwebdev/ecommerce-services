@@ -124,8 +124,8 @@ exports.updateStock = (req, res, next) => {
   let myOperations = req.body.products.map((prod) => {
     return {
       updateOne: {
-        filter: { _id: prod },
-        update: { $inc: { stock: -1, sold: +1 } },
+        filter: { _id: prod.productId },
+        update: { $inc: { stock: -prod.quantity, sold: +prod.quantity } },
       },
     };
   });
