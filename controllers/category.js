@@ -46,6 +46,7 @@ exports.updateCategory = (req, res) => {
   category.save((err, updatedCategory) => {
     if (err) {
       console.log(err);
+      
       return res.status(400).json({ error: "cannot update category" });
     }
     res.json(updatedCategory);
