@@ -92,7 +92,7 @@ exports.updateProduct = (req, res) => {
       product.photo.data = fs.readFileSync(file.photo.path);
       product.photo.contentType = file.photo.type;
     }
-    //console.log(product)
+
     //save file to database
     product.save((err, product) => {
       if (err) {
@@ -124,7 +124,7 @@ exports.updateStock = (req, res, next) => {
   let myOperations = req.body.products.map((prod) => {
     return {
       updateOne: {
-        filter: { _id: prod.productId },
+        filter: { _id: prod.product },
         update: { $inc: { stock: -prod.quantity, sold: +prod.quantity } },
       },
     };

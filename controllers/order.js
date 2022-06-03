@@ -15,7 +15,6 @@ exports.getOrderById = (req, res, next, id) => {
 exports.createOrder = (req, res) => {
   req.body.user = req.profile;
 
-  const order = new Order(req.body);
   req.body.products = req.body.products.map(
     ({ product: productId, quantity }) => {
       let product = req.products.find((product) =>
@@ -29,6 +28,8 @@ exports.createOrder = (req, res) => {
       };
     }
   );
+
+  const order = new Order(req.body);
 
   order.save((err, order) => {
     if (err) {
@@ -55,13 +56,13 @@ exports.getOrderstatus = (req, res) => {
 
 exports.updateStatus = (req, res) => {
   Order.updateOne(
-    { _id: req.body.orderId },
+    { _id: req.params.orderId },
     { $set: { status: req.body.status } },
     (err, order) => {
       if (err) {
         return res.status(400).json({ error: "error updating Status" });
       }
-      res.json(order);
+      res.json({ message: "Updated successfully!" });
     }
   );
 };

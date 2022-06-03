@@ -12,13 +12,11 @@ exports.getCategoryById = (req, res, next, id) => {
 
 exports.createCategory = (req, res) => {
   const category = new Category(req.body);
-  console.log(req.body);
   category.save((err, category) => {
     if (err) {
       console.log(err);
       return res.status(400).json({ error: "not able to save category" });
     }
-    console.log({ category });
     return res.json({ category });
   });
 };
@@ -38,7 +36,6 @@ exports.getAllCategory = (req, res) => {
 
 exports.updateCategory = (req, res) => {
   const category = req.category;
-  console.log(req.category);
   category.name = req.body.name;
   category.save((err, updatedCategory) => {
     if (err) {
