@@ -52,36 +52,44 @@ exports.userPurchaseList = (req, res) => {
 };
 
 exports.pushOrderInPurchaseList = async (req, res, next) => {
-  let purchases = [];
-  let productIds = req.body.products.map((product) => product.product);
-
-  const products = await Product.find({ _id: { $in: productIds } }).lean();
-  req.products = products;
-
-  for (let i = 0; i < req.body.products.length; i++) {
-    const productId = req.body.products[i].product;
-    const quantity = req.body.products[i].quantity;
-    let product = products.find((product) => product._id.equals(productId));
-    if (product) {
-      purchases.push({
-        name: product.name,
-        description: product.description,
-        quantity,
-        price: product.price,
-      });
+  try {
+    if (!req.body || !req.body.products || !req.body.products.length) {
+      return res.status(400).json({ error: "Invalid request body" });
     }
-  }
+    let purchases = [];
+    let productIds = req.body.products.map((product) => product.product);
 
-  //store in db
-  User.findByIdAndUpdate(
-    { _id: req.profile._id },
-    { $push: { purchases } },
-    { new: true },
-    (err, purchases) => {
-      if (err) {
-        return res.status(400).json({ error: "unable to save purchases" });
+    const products = await Product.find({ _id: { $in: productIds } }).lean();
+    req.products = products;
+
+    for (let i = 0; i < req.body.products.length; i++) {
+      const productId = req.body.products[i].product;
+      const quantity = req.body.products[i].quantity;
+      let product = products.find((product) => product._id.equals(productId));
+      if (product) {
+        purchases.push({
+          name: product.name,
+          description: product.description,
+          quantity,
+          price: product.price,
+        });
       }
-      next();
     }
-  );
+
+    //store in db
+    User.findByIdAndUpdate(
+      { _id: req.profile._id },
+      { $push: { purchases } },
+      { new: true },
+      (err, purchases) => {
+        if (err) {
+          return res.status(400).json({ error: "unable to save purchases" });
+        }
+        next();
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    return res.status(400).json({ error: "Something went wrong!!" });
+  }
 };
